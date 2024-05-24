@@ -1,0 +1,6 @@
+framework module CommerceKit [system] {
+    umbrella header "CommerceKit.h"
+
+    export *
+    module * { export * }
+}
