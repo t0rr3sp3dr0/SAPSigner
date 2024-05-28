@@ -111,6 +111,9 @@ long FairPlayDisposeStorage(void *ptr);
 #define FairPlaySAPSign Fc3vhtJDvr
 long FairPlaySAPSign(struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len);
 
+#define FairPlaySAPTeardown IPaI1oem5iL
+long FairPlaySAPTeardown(struct FPSAPContextOpaque_ *ctx);
+
 static struct FairPlayHWInfo_ hw_info = {
     .IDLength = 6,
     .ID = {
@@ -387,6 +390,10 @@ int main(int argc, const char *argv[]) {
     if (!FairPlayDisposeStorage(sign_sap_buffer_odata)) {
         sign_sap_buffer_odata = NULL;
         sign_sap_buffer_osize = 0;
+    }
+
+    if (!FairPlaySAPTeardown(ctx)) {
+        ctx = NULL;
     }
 
     return 0;

@@ -5,5 +5,5 @@ install-name:    'libmescal.dylib'
 current-version: 1
 exports:
   - targets:     [ x86_64-macos, x86_64h-macos, arm64-macos, arm64e-macos ]
-    symbols:     [ _Fc3vhtJDvr, _Mib5yocT, _cp2g1b9ro, _jEHf8Xzsv8K ]
+    symbols:     [ _Fc3vhtJDvr, _IPaI1oem5iL, _Mib5yocT, _cp2g1b9ro, _jEHf8Xzsv8K ]
 ...
