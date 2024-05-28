@@ -6,5 +6,8 @@ build:
 .PHONY: all
 
 clean:
-	rm -Rfv ./.build ./.swiftpm
+	rm -Rfv ./.build ./.swiftpm ./a.out
 .PHONY: clean
+
+a.out: ./Sources/SAPSignerAlt/*
+	$(CC) -lcurl -lsasl2 -L ./Sources/SAPSignerAlt -lmescal -o $@ ./Sources/SAPSignerAlt/main.c
