@@ -5,114 +5,12 @@
 //  Created by Pedro Tôrres on 2024-05-27.
 //
 
-#include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-#include <curl/curl.h>
-#include <sasl/saslutil.h>
-
-int base64_encode(const char *in_buf, unsigned long in_len, char *out_buf, unsigned long out_cap, unsigned long *out_len) {
-    assert(in_len <= UINT_MAX);
-    assert(out_cap <= UINT_MAX);
-    *out_len = 0;
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return sasl_encode64(in_buf, (unsigned int) in_len, out_buf, (unsigned int) out_cap, (unsigned int *) out_len);
-#pragma clang diagnostic pop
-}
-
-int base64_decode(const char *in_buf, unsigned long in_len, char *out_buf, unsigned long out_cap, unsigned long *out_len) {
-    assert(in_len <= UINT_MAX);
-    assert(out_cap <= UINT_MAX);
-    *out_len = 0;
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return sasl_decode64(in_buf, (unsigned int) in_len, out_buf, (unsigned int) out_cap, (unsigned int *) out_len);
-#pragma clang diagnostic pop
-}
-
-struct http_response {
-    char **data;
-    unsigned long *size;
-};
-
-static size_t http_write(void *contents, size_t size, size_t nmemb, void *userp) {
-    size_t realsize = size * nmemb;
-    struct http_response *res = userp;
-
-    unsigned long new_size = *res->size + realsize;
-    char *new_data = realloc(*res->data, new_size + 1);
-    if (!new_data) {
-        return 0;
-    }
-
-    (void) memcpy(new_data + *res->size, contents, realsize);
-    new_data[new_size] = '\0';
-
-    *res->data = new_data;
-    *res->size = new_size;
-
-    return realsize;
-}
-
-int http_post(const char *url, const char *req_data, unsigned long req_size, char **res_data, unsigned long *res_size) {
-    curl_global_init(CURL_GLOBAL_ALL);
-
-    CURL *curl = curl_easy_init();
-    if (!curl) {
-        return -1;
-    }
-
-    struct http_response res = {
-        .data = res_data,
-        .size = res_size,
-    };
-
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, req_data);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, req_size);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, http_write);
-
-    CURLcode ret = curl_easy_perform(curl);
-
-    curl_easy_cleanup(curl);
-
-    curl_global_cleanup();
-
-    return ret;
-}
-
-struct FPSAPContextOpaque_;
-
-struct FairPlayHWInfo_ {
-    unsigned int IDLength;
-    unsigned char ID[20];
-};
-
-enum {
-    FairPlaySAPExchangeVersionNotPrimed = 200,
-    FairPlaySAPExchangeVersionPrimed = 210,
-};
-
-#define FairPlaySAPInit cp2g1b9ro
-extern long FairPlaySAPInit(struct FPSAPContextOpaque_ **ctx, struct FairPlayHWInfo_ *hw_info);
-
-#define FairPlaySAPExchange Mib5yocT
-extern long FairPlaySAPExchange(unsigned int version, struct FairPlayHWInfo_ *hw_info, struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len, long *return_code);
-
-#define FairPlayDisposeStorage jEHf8Xzsv8K
-extern long FairPlayDisposeStorage(void *ptr);
-
-#define FairPlaySAPSign Fc3vhtJDvr
-extern long FairPlaySAPSign(struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len);
-
-#define FairPlaySAPTeardown IPaI1oem5iL
-extern long FairPlaySAPTeardown(struct FPSAPContextOpaque_ *ctx);
+#include "base64.h"
+#include "http.h"
+#include "mescal.h"
 
 static struct FairPlayHWInfo_ hw_info = {
     .IDLength = 6,
@@ -277,7 +175,7 @@ static const char sign_sap_setup_cert_data[] = {
 
 static const unsigned long sign_sap_setup_cert_size = sizeof sign_sap_setup_cert_data;
 
-int main(int argc, const char *argv[]) {
+int main(void) {
     long ret = 0;
     long err = 0;
 
@@ -300,7 +198,7 @@ int main(int argc, const char *argv[]) {
 
     char sign_sap_setup_buffer_64data[4096] = { '\0' };
     unsigned long sign_sap_setup_buffer_64size = 0;
-    if ((ret = base64_encode(sign_sap_setup_buffer_odata, sign_sap_setup_buffer_osize, sign_sap_setup_buffer_64data, sizeof sign_sap_setup_buffer_64data, &sign_sap_setup_buffer_64size)) != SASL_OK) {
+    if ((ret = base64_encode(sign_sap_setup_buffer_odata, sign_sap_setup_buffer_osize, sign_sap_setup_buffer_64data, sizeof sign_sap_setup_buffer_64data, &sign_sap_setup_buffer_64size))) {
         (void) fprintf(stderr, "base64_encode: ret=%ld", ret);
         return -1;
     }
@@ -320,7 +218,7 @@ int main(int argc, const char *argv[]) {
 
     char *res_data = NULL;
     unsigned long res_size = 0;
-    if ((ret = http_post("https://play.itunes.apple.com/WebObjects/MZPlay.woa/wa/signSapSetup", req_data, req_size, &res_data, &res_size)) != CURLE_OK) {
+    if ((ret = http_post("https://play.itunes.apple.com/WebObjects/MZPlay.woa/wa/signSapSetup", req_data, req_size, &res_data, &res_size))) {
         (void) fprintf(stderr, "http_post: ret=%ld", ret);
         return -1;
     }
@@ -344,7 +242,7 @@ int main(int argc, const char *argv[]) {
 
     char sign_sap_setup_buffer_idata[4096] = { '\0' };
     unsigned long sign_sap_setup_buffer_isize = 0;
-    if ((ret = base64_decode(sign_sap_setup_buffer_64data, sign_sap_setup_buffer_64size, sign_sap_setup_buffer_idata, sizeof sign_sap_setup_buffer_idata, &sign_sap_setup_buffer_isize)) != SASL_OK) {
+    if ((ret = base64_decode(sign_sap_setup_buffer_64data, sign_sap_setup_buffer_64size, sign_sap_setup_buffer_idata, sizeof sign_sap_setup_buffer_idata, &sign_sap_setup_buffer_isize))) {
         (void) fprintf(stderr, "base64_decode: ret=%ld", ret);
         return -1;
     }
