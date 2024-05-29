@@ -100,19 +100,19 @@ enum {
 };
 
 #define FairPlaySAPInit cp2g1b9ro
-long FairPlaySAPInit(struct FPSAPContextOpaque_ **ctx, struct FairPlayHWInfo_ *hw_info);
+extern long FairPlaySAPInit(struct FPSAPContextOpaque_ **ctx, struct FairPlayHWInfo_ *hw_info);
 
 #define FairPlaySAPExchange Mib5yocT
-long FairPlaySAPExchange(unsigned int version, struct FairPlayHWInfo_ *hw_info, struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len, long *return_code);
+extern long FairPlaySAPExchange(unsigned int version, struct FairPlayHWInfo_ *hw_info, struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len, long *return_code);
 
 #define FairPlayDisposeStorage jEHf8Xzsv8K
-long FairPlayDisposeStorage(void *ptr);
+extern long FairPlayDisposeStorage(void *ptr);
 
 #define FairPlaySAPSign Fc3vhtJDvr
-long FairPlaySAPSign(struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len);
+extern long FairPlaySAPSign(struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len);
 
 #define FairPlaySAPTeardown IPaI1oem5iL
-long FairPlaySAPTeardown(struct FPSAPContextOpaque_ *ctx);
+extern long FairPlaySAPTeardown(struct FPSAPContextOpaque_ *ctx);
 
 static struct FairPlayHWInfo_ hw_info = {
     .IDLength = 6,
