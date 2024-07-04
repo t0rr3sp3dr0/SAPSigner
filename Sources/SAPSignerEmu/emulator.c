@@ -8,9 +8,15 @@
 #include <stddef.h>
 #include <string.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnewline-eof"
 #include <unicorn/unicorn.h>
+#pragma clang diagnostic pop
 
 #include "emulator.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdollar-in-identifier-extension"
 #include "libinterposer.dylib.__DATA.__data.h"
 #include "libinterposer.dylib.__TEXT.__text.h"
 #include "libmescal.dylib.__DATA.__const.h"
@@ -19,6 +25,7 @@
 #include "libmescal.dylib.__TEXT.__const.h"
 #include "libmescal.dylib.__TEXT.__stubs.h"
 #include "libmescal.dylib.__TEXT.__text.h"
+#pragma clang diagnostic pop
 
 #define uc_do(function, ...)                                                                                           \
     do {                                                                                                               \
@@ -46,6 +53,8 @@ int emulator_new(struct emulator *emu) {
     };
     uc_do(uc_mem_map_ptr, uc, 0x0000000100000000, sizeof text, UC_PROT_READ | UC_PROT_EXEC, text);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdollar-in-identifier-extension"
     // map libinterposer.dylib.__TEXT.__text
     uc_do(uc_mem_map, uc, 0x0000000100e45000, 0x0000000100e46000 - 0x0000000100e45000, UC_PROT_READ | UC_PROT_EXEC);
     uc_do(uc_mem_write_literal, uc, 0x0000000100e458f0, libinterposer$dylib$__TEXT$__text);
@@ -74,6 +83,7 @@ int emulator_new(struct emulator *emu) {
     // map libmescal.dylib.__DATA.__const
     uc_do(uc_mem_map, uc, 0x0000000100c11000, 0x0000000100c14000 - 0x0000000100c11000, UC_PROT_READ | UC_PROT_WRITE);
     uc_do(uc_mem_write_literal, uc, 0x0000000100c11170, libmescal$dylib$__DATA$__const);
+#pragma clang diagnostic pop
 
     // map libmescal.dylib.__DATA.__common
     uc_do(uc_mem_map, uc, 0x0000000100c22000, 0x0000000100c23000 - 0x0000000100c22000, UC_PROT_READ | UC_PROT_WRITE);

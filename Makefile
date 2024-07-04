@@ -33,4 +33,4 @@ sapsigner-alt.out: ./Sources/SAPSignerAlt/*
 	$(CC) -L ./Sources/SAPSignerAlt -O2 -Wall -Wextra -Wpedantic -lcurl -lmescal -lsasl2 -o $@ ./Sources/SAPSignerAlt/*.c
 
 sapsigner-emu.out: ./Sources/SAPSignerEmu/* ./include/unicorn/unicorn.h ./lib/libunicorn.a
-	$(CC) -I ./include -L ./lib -O2 -Wall -Wextra -Wpedantic -Wno-dollar-in-identifier-extension -lcurl -lsasl2 -lunicorn -rpath . -o $@ ./Sources/SAPSignerEmu/*.c
+	$(CC) -I ./include -L ./lib -O2 -Wall -Wextra -Wpedantic -lcurl -lsasl2 -lunicorn -rpath . -o $@ ./Sources/SAPSignerEmu/*.c
