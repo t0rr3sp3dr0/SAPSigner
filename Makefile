@@ -5,14 +5,14 @@ build: sapsigner-pfw.out
 .PHONY: build
 
 clean:
-	rm -Rfv ./.build ./.swiftpm ./*.out ./include ./lib
+	rm -Rfv ./*.out ./.build ./.swiftpm ./Package.resolved ./include ./lib
 .PHONY: clean
 
 docker:
 	docker build -t t0rr3sp3dr0/sapsigner .
 .PHONY: docker
 
-sapsigner-pfw.out: ./CommerceKit.xcframework/* ./CommerceKit.xcframework/macos-arm64_x86_64/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Headers/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Modules/* ./Package.resolved ./Package.swift ./Sources/SAPSignerBin/* ./Sources/SAPSignerLib/* ./Sources/SAPSignerLib/include/*
+sapsigner-pfw.out: ./CommerceKit.xcframework/* ./CommerceKit.xcframework/macos-arm64_x86_64/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Headers/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Modules/* ./Package.swift ./Sources/SAPSignerBin/* ./Sources/SAPSignerLib/* ./Sources/SAPSignerLib/include/*
 	swift build -c release --arch arm64 --arch x86_64
 	ln -fs ./.build/apple/Products/Release/sapsigner $@
 
