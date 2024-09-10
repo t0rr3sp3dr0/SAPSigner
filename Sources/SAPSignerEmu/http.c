@@ -36,13 +36,56 @@ static size_t http_write(void *contents, size_t size, size_t nmemb, void *userp)
     return realsize;
 }
 
-int http_post(const char *url, const char *req_data, unsigned long req_size, char **res_data, unsigned long *res_size) {
-    curl_global_init(CURL_GLOBAL_ALL);
+static CURL *curl;
 
-    CURL *curl = curl_easy_init();
+int http_init(void) {
+    if (curl) {
+        return 1;
+    }
+
+    CURLcode code = curl_global_init(CURL_GLOBAL_ALL);
+    if (code) {
+        return code;
+    }
+
+    curl = curl_easy_init();
     if (!curl) {
         return -1;
     }
+
+    return 0;
+}
+
+int http_cleanup(void) {
+    if (!curl) {
+        return 1;
+    }
+
+    curl_easy_cleanup(curl);
+    curl = NULL;
+
+    curl_global_cleanup();
+
+    return 0;
+}
+
+int http_get(const char *url, char **res_data, unsigned long *res_size) {
+    struct http_response res = {
+        .data = res_data,
+        .size = res_size,
+    };
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, http_write);
+
+    CURLcode code = curl_easy_perform(curl);
+    return code;
+}
+
+int http_post(const char *url, const char *req_data, unsigned long req_size, char **res_data, unsigned long *res_size) {
+    *res_data = NULL;
+    *res_size = 0;
 
     struct http_response res = {
         .data = res_data,
@@ -55,11 +98,6 @@ int http_post(const char *url, const char *req_data, unsigned long req_size, cha
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, http_write);
 
-    CURLcode ret = curl_easy_perform(curl);
-
-    curl_easy_cleanup(curl);
-
-    curl_global_cleanup();
-
-    return ret;
+    CURLcode code = curl_easy_perform(curl);
+    return code;
 }

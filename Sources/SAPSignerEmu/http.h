@@ -8,6 +8,10 @@
 #ifndef http_h
 #define http_h
 
+int http_init(void);
+int http_cleanup(void);
+
+int http_get(const char *url, char **res_data, unsigned long *res_size);
 int http_post(const char *url, const char *req_data, unsigned long req_size, char **res_data, unsigned long *res_size);
 
 #endif /* http_h */
