@@ -106,6 +106,9 @@ Dockerfile
 ## Git
 .git*
 
+## Hack
+hack/
+
 ## Text
 LICENSE
 README.md

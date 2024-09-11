@@ -12,6 +12,10 @@ docker:
 	docker build -t t0rr3sp3dr0/sapsigner .
 .PHONY: docker
 
+test(%):
+	./hack/test.sh $%
+.PHONY: test(%)
+
 UNAME_MACHINE ?= $(shell uname -m)
 UNAME_SYSNAME ?= $(shell uname -s)
 ifeq ($(UNAME_SYSNAME) $(UNAME_MACHINE),Linux x86_64)
