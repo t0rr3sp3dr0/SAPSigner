@@ -1,0 +1,50 @@
+name: Test
+on:
+  push: {}
+jobs:
+  pfw:
+    name: Private Framework
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-12
+          - os: macos-13
+          - os: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: make 'sapsigner-pfw.out'
+      - run: make 'test(./sapsigner-pfw.out)'
+  emu:
+    name: Emulation
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            deps: make ./include/unicorn/unicorn.h ./lib/libunicorn.a
+          - os: macos-14
+            deps: brew install 'unicorn'
+          - os: ubuntu-latest
+            deps: sudo apt-get update && sudo apt-get install -y 'libcurl4-openssl-dev' 'libsasl2-dev' && make ./include/unicorn/unicorn.h ./lib/libunicorn.a
+          - os: ubuntu-24.04
+            deps: sudo apt-get update && sudo apt-get install -y 'libcurl4-openssl-dev' 'libsasl2-dev' 'libunicorn-dev'
+    steps:
+      - uses: actions/checkout@v4
+      - run: ${{ matrix.deps }}
+      - run: make 'sapsigner-emu.out'
+      - run: make 'test(./sapsigner-emu.out)'
+  docker:
+    name: Docker
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make 'docker'
+      - run: make 'test(./hack/docker-run.sh)'
