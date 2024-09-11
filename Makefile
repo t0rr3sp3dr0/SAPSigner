@@ -27,14 +27,14 @@ else ifeq ($(UNAME_SYSNAME) $(UNAME_MACHINE),Darwin arm64)
 endif
 
 include/unicorn/unicorn.h lib/libunicorn.a:
-	[ -z '$(UNICORN_BLOB)' ] || curl --compressed -Lfv -H 'Accept: application/vnd.oci.image.index.v1+json' -H 'Authorization: Bearer QQ==' 'https://ghcr.io/v2/homebrew/core/unicorn/blobs/$(UNICORN_BLOB)' | tar --strip-components 2 -vx ./unicorn/2.0.1.post1/{include,lib}
+	[ -z '$(UNICORN_BLOB)' ] || curl -H 'Accept: application/vnd.oci.image.index.v1+json' -H 'Authorization: Bearer QQ==' -Lf 'https://ghcr.io/v2/homebrew/core/unicorn/blobs/$(UNICORN_BLOB)' | zcat -f | tar --strip-components 2 -vx unicorn/2.0.1.post1/include unicorn/2.0.1.post1/lib
 
 sapsigner-pfw.out: ./CommerceKit.xcframework/* ./CommerceKit.xcframework/macos-arm64_x86_64/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Headers/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Modules/* ./Package.swift ./Sources/SAPSignerBin/* ./Sources/SAPSignerLib/* ./Sources/SAPSignerLib/include/*
 	swift build -c release --arch arm64 --arch x86_64
 	ln -fs ./.build/apple/Products/Release/sapsigner $@
 
 sapsigner-alt.out: ./Sources/SAPSignerAlt/*
-	$(CC) -L ./Sources/SAPSignerAlt -O2 -Wall -Wextra -Wpedantic -lcurl -lmescal -lsasl2 -o $@ ./Sources/SAPSignerAlt/*.c
+	clang -L ./Sources/SAPSignerAlt -O2 -Wall -Wextra -Wpedantic -lcurl -lmescal -lsasl2 -o $@ ./Sources/SAPSignerAlt/*.c
 
 sapsigner-emu.out: ./Sources/SAPSignerEmu/* # ./include/unicorn/unicorn.h ./lib/libunicorn.a
-	$(CC) -I ./include -L ./lib -O2 -Wall -Wextra -Wpedantic -lcurl -lsasl2 -lunicorn -rpath . -o $@ ./Sources/SAPSignerEmu/*.c
+	clang -I /opt/homebrew/include -L /opt/homebrew/lib -I ./include -L ./lib -O2 -Wall -Wextra -Wpedantic -lcurl -lsasl2 -lunicorn -rpath . -o $@ ./Sources/SAPSignerEmu/*.c
