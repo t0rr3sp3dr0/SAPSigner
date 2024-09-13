@@ -11,7 +11,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SAPSigner : NSObject
 
-+ (nullable NSData *)signData:(NSData *)data error:(NSError **)error;
++ (nullable NSData *)primeData:(NSData *)data returningError:(NSError **)error __attribute__((swift_name("prime(_:)")));
+
++ (nullable NSData *)signData:(NSData *)data returningError:(NSError **)error __attribute__((swift_name("sign(_:)")));
 
 @end
 

@@ -14,26 +14,33 @@ import SAPSignerLib
 @main
 struct Command: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "sapsigner")
-    
+
     @Option(name: .shortAndLong, help: "The input file path")
     var input: String = "-"
-    
+
     @Option(name: .shortAndLong, help: "The output file path")
     var output: String = "-"
-    
+
+    @Flag(name: .shortAndLong, help: "Use primed signing session")
+    var primed: Bool = false
+
     mutating func run() throws {
         let iData: Data
-        if input == "-" {
+        if self.input == "-" {
             iData = FileHandle.standardInput.readDataToEndOfFile()
         } else {
-            iData = try Data(contentsOf: URL(fileURLWithPath: input))
+            iData = try Data(contentsOf: URL(fileURLWithPath: self.input))
         }
-        
-        let oData = try SAPSigner.sign(iData)
-        if output == "-" {
+
+        let oData = if self.primed {
+            try SAPSigner.prime(iData)
+        } else {
+            try SAPSigner.sign(iData)
+        }
+        if self.output == "-" {
             FileHandle.standardOutput.write(oData)
         } else {
-            try oData.write(to: URL(fileURLWithPath: output))
+            try oData.write(to: URL(fileURLWithPath: self.output))
         }
     }
 }
