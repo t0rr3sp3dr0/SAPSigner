@@ -29,7 +29,7 @@ endif
 include/unicorn/unicorn.h lib/libunicorn.a:
 	[ -z '$(UNICORN_BLOB)' ] || curl -H 'Accept: application/vnd.oci.image.index.v1+json' -H 'Authorization: Bearer QQ==' -Lf 'https://ghcr.io/v2/homebrew/core/unicorn/blobs/$(UNICORN_BLOB)' | zcat -f | tar --strip-components 2 -vx unicorn/2.0.1.post1/include unicorn/2.0.1.post1/lib
 
-sapsigner-pfw.out: ./CommerceKit.xcframework/* ./CommerceKit.xcframework/macos-arm64_x86_64/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Headers/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Modules/* ./Package.swift ./Sources/SAPSignerBin/* ./Sources/SAPSignerLib/* ./Sources/SAPSignerLib/include/*
+sapsigner-pfw.out: ./AppleMediaServices.xcframework/* ./AppleMediaServices.xcframework/macos-arm64_x86_64/* ./AppleMediaServices.xcframework/macos-arm64_x86_64/AppleMediaServices.framework/* ./AppleMediaServices.xcframework/macos-arm64_x86_64/AppleMediaServices.framework/Headers/* ./AppleMediaServices.xcframework/macos-arm64_x86_64/AppleMediaServices.framework/Modules/* ./CommerceKit.xcframework/* ./CommerceKit.xcframework/macos-arm64_x86_64/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Headers/* ./CommerceKit.xcframework/macos-arm64_x86_64/CommerceKit.framework/Modules/* ./Package.swift ./Sources/SAPSignerBin/* ./Sources/SAPSignerLib/* ./Sources/SAPSignerLib/include/*
 	swift build -c release --arch arm64 --arch x86_64
 	ln -fs ./.build/apple/Products/Release/sapsigner $@
 

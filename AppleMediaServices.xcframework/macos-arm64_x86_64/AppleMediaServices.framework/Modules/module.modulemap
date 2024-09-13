@@ -1,0 +1,6 @@
+framework module AppleMediaServices [system] {
+    umbrella header "AppleMediaServices.h"
+
+    export *
+    module * { export * }
+}

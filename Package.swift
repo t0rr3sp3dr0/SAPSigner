@@ -23,8 +23,13 @@ let package = Package(
         .target(
             name: "SAPSignerLib",
             dependencies: [
+                .target(name: "AppleMediaServices"),
                 .target(name: "CommerceKit"),
             ]
+        ),
+        .binaryTarget(
+            name: "AppleMediaServices",
+            path: "AppleMediaServices.xcframework"
         ),
         .binaryTarget(
             name: "CommerceKit",
