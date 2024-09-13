@@ -32,11 +32,13 @@ struct Command: ParsableCommand {
             iData = try Data(contentsOf: URL(fileURLWithPath: self.input))
         }
 
-        let oData = if self.primed {
-            try SAPSigner.prime(iData)
+        let oData: Data
+        if self.primed {
+            oData = try SAPSigner.prime(iData)
         } else {
-            try SAPSigner.sign(iData)
+            oData = try SAPSigner.sign(iData)
         }
+
         if self.output == "-" {
             FileHandle.standardOutput.write(oData)
         } else {
