@@ -13,7 +13,8 @@ docker:
 .PHONY: docker
 
 test(%):
-	./hack/test.sh $%
+	./hack/test-authenticate.sh $%
+	./hack/test-signupWizard.sh $%
 .PHONY: test(%)
 
 UNAME_MACHINE ?= $(shell uname -m)
