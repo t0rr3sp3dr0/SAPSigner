@@ -32,6 +32,12 @@ extern long FairPlayDisposeStorage(void *ptr);
 #define FairPlaySAPSign Fc3vhtJDvr
 extern long FairPlaySAPSign(struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len);
 
+#define FairPlaySAPPrime jfkdDAjba3jd
+extern long FairPlaySAPPrime(struct FPSAPContextOpaque_ *ctx, unsigned long _100 /* 0x64 */, const char *in_buf, unsigned long in_len, char **out_buf, unsigned long *out_len);
+
+#define FairPlaySAPVerify gLg1CWr7p
+extern long FairPlaySAPVerify(struct FPSAPContextOpaque_ *ctx, const char *in_buf, unsigned long in_len, char **out_buf /* NULL */, unsigned long *out_len /* NULL */);
+
 #define FairPlaySAPTeardown IPaI1oem5iL
 extern long FairPlaySAPTeardown(struct FPSAPContextOpaque_ *ctx);
 
