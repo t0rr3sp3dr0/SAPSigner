@@ -12,11 +12,9 @@ SIG="$(: | DYLD_LIBRARY_PATH="${DIR}/../lib" LD_LIBRARY_PATH="${DIR}/../lib" "${
     -f \
     -i \
     -o '/dev/null' \
-    -w '%{header_json}\n' \
+    -w '%header{X-Apple-ActionSignature}\n' \
     'https://p49-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/signupWizard?guid=000000000000' \
     2> '/dev/null' \
 | grep \
-    -F \
-    -c \
-    -i \
-    '"X-Apple-ActionSignature":['
+    -E \
+    '^([0-9A-Za-z+/]{4})*([0-9A-Za-z+/]{4}|[0-9A-Za-z+/]{3}=|[0-9A-Za-z+/]{2}==)$'
