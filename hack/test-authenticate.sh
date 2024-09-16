@@ -10,7 +10,6 @@ SIG="$(: | DYLD_LIBRARY_PATH="${DIR}/../lib" LD_LIBRARY_PATH="${DIR}/../lib" "${
     -H "X-Apple-ActionSignature: ${SIG}" \
     -X 'POST' \
     -f \
-    -i \
     -o '/dev/null' \
     -w '%{response_code}\n' \
     'https://p40-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate' \

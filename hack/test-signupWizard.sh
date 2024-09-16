@@ -10,7 +10,6 @@ SIG="$(: | DYLD_LIBRARY_PATH="${DIR}/../lib" LD_LIBRARY_PATH="${DIR}/../lib" "${
     -H "X-Apple-ActionSignature: ${SIG}" \
     -X 'GET' \
     -f \
-    -i \
     -o '/dev/null' \
     -w '%header{X-Apple-ActionSignature}\n' \
     'https://p49-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/signupWizard?guid=000000000000' \
