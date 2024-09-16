@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -eux -o 'pipefail'
 
 DIR="$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")"
 SIG="$(: | DYLD_LIBRARY_PATH="${DIR}/../lib" LD_LIBRARY_PATH="${DIR}/../lib" "${1}" | base64 | tr -d '\n')"
